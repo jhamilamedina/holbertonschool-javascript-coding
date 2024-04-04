@@ -13,7 +13,7 @@ if (!filePath) {
 // leer el achivo
 fs.readFile(filePath, 'utf8', (error, data) => {
   if (error) {
-    console.error('the error object:');
+    console.error('no such file or directory:', error);
     return;
   }
 
