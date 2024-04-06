@@ -14,7 +14,7 @@ if (!filePath || !contentToWrite) {
 }
 
 // Escribir la cadena en el archivo
-fs.writeFile(filePath, contentToWrite, 'utf8', (error) => {
+fs.writeFile(filePath, contentToWrite, 'utf-8', (error) => {
   if (error) {
     console.error('Error writing file', error);
     return;
