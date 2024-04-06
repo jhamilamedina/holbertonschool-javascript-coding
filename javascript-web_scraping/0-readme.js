@@ -13,7 +13,7 @@ if (!filePath) {
 fs.readFile(filePath, 'utf-8', (error, data) => {
   if (error) {
     console.error(error);
-  }else {
+  } else {
     console.log(data);
   }
 });
