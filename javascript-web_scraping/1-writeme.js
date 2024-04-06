@@ -2,10 +2,10 @@
 const fs = require('fs');
 
 // File Patnodh obtener la ruta del archivo
-const filePath = 'my_file.txt';
+const filePath = process.argv[2];
 
 // Obtener la cadena a escribir del 2do argumento
-const contentToWrite = 'Python is cool';
+const contentToWrite = process.argv[3];
 
 // Verificar si se proporcionaron los argumentos necesarios
 if (!filePath || !contentToWrite) {
