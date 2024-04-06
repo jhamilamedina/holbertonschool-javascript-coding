@@ -10,7 +10,7 @@ if (!url || !filePath) {
   console.log('Ingresa una URL');
   process.exit(1);
 }
-// Realizar la solicitud GET a la API
+// Realizar la solicitud GET a la URL
 request(url, (error, response, body) => {
   if (error) {
     console.log(error);
