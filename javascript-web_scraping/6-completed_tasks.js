@@ -2,32 +2,35 @@
 
 const request = require('request');
 
-const apiUrl = 'https://jsonplaceholder.typicode.com/todos';
+const url = process.argv[2];
 
-request.get(apiUrl, (error, response, body) => {
-  if (error) {
-    console.error('Error al realizar la solicitud:', error);
-    return;
+if (!url) {
+  console.log('Ingrese una URL');
+  process.exit(1);
+}
+
+request(url, (err, response, body) => {
+  if (err) {
+    console.log(err);
+    process.exit(1);
   }
 
   if (response.statusCode !== 200) {
-    console.error('Error en la respuesta de la API:', response.statusCode);
-    return;
+    console.log('Houston tenemos un problema');
+    process.exit(1);
   }
 
-  const tasks = JSON.parse(body);
+  const todos = JSON.parse(body);
+  const todosCompleted = {};
 
-  const completedTasksByUser = {};
-
-  tasks.forEach(task => {
-    if (task.completed) {
-      if (completedTasksByUser[task.userId]) {
-        completedTasksByUser[task.userId]++;
+  todos.forEach((todo) => {
+    if (todo.completed) {
+      if (todosCompleted[todo.userId]) {
+        todosCompleted[todo.userId]++;
       } else {
-        completedTasksByUser[task.userId] = 1;
+        todosCompleted[todo.userId] = 1;
       }
     }
   });
-
-  console.log(completedTasksByUser);
+  console.log(todosCompleted);
 });
