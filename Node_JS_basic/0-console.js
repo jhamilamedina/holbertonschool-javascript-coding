@@ -2,7 +2,7 @@
 
 function displayMessage(message) {
   // Imprimiendo el argumento
-console.log(message);
+  console.log(message);
 }
 // Export la funcion displayMessage para usarla en otros archivos
 module.exports = displayMessage;
