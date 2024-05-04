@@ -1,4 +1,4 @@
-// Crea un programa que se ejecute a traves de la linea de comando
+// Crea un programa que se ejecute a traves de la linea de comando.
 
 // Importar el módulo 'readline' para leer la entrada del usuario desde la línea de comandos
 const readline = require('readline');
