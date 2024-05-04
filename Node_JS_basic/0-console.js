@@ -1,4 +1,4 @@
-// Crear una función que imprima en STDOUT el argumento de cadena.
+// Se Crear una función que imprima en STDOUT el argumento de cadena.
 
 function displayMessage(message) {
   // Imprimiendo el argumento de la funcion
