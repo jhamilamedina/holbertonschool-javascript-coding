@@ -1,23 +1,12 @@
-// Crea un programa que se ejecute a traves de la linea de comando.
+process.stdout.write('Welcome to Holberton School, what is your name?\n');
 
-// Importar el módulo 'readline' para leer la entrada del usuario desde la línea de comandos
-const readline = require('readline');
-
-// Crear una interfaz de lectura para leer la entrada del usuario desde la línea de comandos
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
+process.stdin.on('readable', () => {
+  const chunk = process.stdin.read();
+  if (chunk){
+    process.stdout.write(`Your name is: ${chunk}`);
+  }
 });
 
-// Mostrar un mensaje de bienvenida
-console.log('Welcome to Holberton School, what is your name?');
-
-// Leer la entrada del usuario
-rl.on('line', (input) => {
-  // Mostrar el nombre del usuario
-  console.log(`Your name is: ${input}`);
-
-  // Mostrar un mensaje de despedida y cerrar el programa
-  console.log('This important software is now closing');
-  rl.close();
+process.stdin.on('end', () => {
+  process.stdout.write('This important software is now closing\n');
 });
