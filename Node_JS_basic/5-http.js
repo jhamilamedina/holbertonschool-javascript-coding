@@ -77,8 +77,8 @@ const handleRequest = (req, res) => {
       .then((data) => {
         res.statusCode = 200;
         res.end(`This is the list of our students\n${data}`);
-    })
-    .catch((err) => {
+      })
+      .catch((err) => {
         res.statusCode = 500;
         res.end(`This is the list of our students\n${err.message}`);
       });
