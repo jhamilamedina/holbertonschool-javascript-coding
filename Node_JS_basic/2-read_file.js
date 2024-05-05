@@ -1,55 +1,57 @@
 const fs = require('fs');
 
-function countStudents(path) {
-    try {
-        // Leer el archivo CSV de forma síncrona
-        const data = fs.readFileSync(path, 'utf8');
-        
-        // Dividir el contenido del archivo en líneas
-        const lines = data.split('\n');
-        
-        // Crear un objeto para almacenar el conteo de estudiantes en cada campo
-        const count = {};
-
-        // Recorrer cada línea del archivo CSV
-        lines.forEach(line => {
-            // Dividir cada línea en campos separados por comas
-            const fields = line.split(',');
-            
-            // Verificar si hay al menos un campo en la línea
-            if (fields.length > 0) {
-                // Obtener el campo que representa el campo de estudio
-                const field = fields[fields.length - 1].trim();
-
-                // Incrementar el conteo de estudiantes en el campo correspondiente
-                count[field] = (count[field] || 0) + 1;
-            }
-        });
-
-        // Mostrar el número total de estudiantes
-        console.log(`Number of students: ${lines.length - 1}`);
-
-        // Mostrar el número de estudiantes en cada campo y la lista de nombres
-        for (const field in count) {
-            console.log(`Number of students in ${field}: ${count[field]}. List: ${getNamesInField(lines, field).join(', ')}`);
-        }
-    } catch (error) {
-        // Manejar el error si el archivo no está disponible
-        console.error('Cannot load the database');
-    }
+function Person(data) {
+  const [firstname, lastname, age, field] = data.split(',');
+  this.firstname = ` ${firstname}`;
+  this.lastname = lastname;
+  this.age = age;
+  this.field = field;
 }
 
-// Función auxiliar para obtener la lista de nombres en un campo específico
-function getNamesInField(lines, field) {
-    const names = [];
-    lines.forEach(line => {
-        const fields = line.split(',');
-        if (fields.length > 0 && fields[fields.length - 1].trim() === field) {
-            names.push(fields[0]);
-        }
+function getPersons(persons) {
+  const personObj = [];
+  if (Array.isArray(persons)) {
+    persons.shift();
+    persons.map((p) => personObj.push(new Person(p)));
+  }
+  return personObj;
+}
+
+function getInfo(personObj, field, condition) {
+  let total = 0;
+  const names = [];
+  if (Array.isArray(personObj)) {
+    personObj.forEach((p) => {
+      if (p[field] === condition) {
+        total += 1;
+        names.push(p.firstname);
+      }
     });
-    return names;
+  }
+  return {
+    total,
+    names,
+  };
 }
 
-// Llamar a la función countStudents con la ruta del archivo como argumento
-countStudents('database.csv');
+function stats(persons) {
+  const personObj = getPersons(persons);
+  const cs = getInfo(personObj, 'field', 'CS');
+  const swe = getInfo(personObj, 'field', 'SWE');
+
+  console.log(`Number of students: ${personObj.length}`);
+  console.log(`Number of students in CS: ${cs.total}. List:${cs.names.join(',')}`);
+  console.log(`Number of students in SWE: ${swe.total}. List:${swe.names.join(',')}`);
+}
+
+function countStudents(filePath) {
+  if (!fs.existsSync(filePath)) {
+    throw new Error('Cannot load the database');
+  } else {
+    const content = fs.readFileSync(filePath, 'utf-8');
+    const persons = content.split('\n').filter((line) => line.trim() !== '');
+    stats(persons);
+  }
+}
+
+module.exports = countStudents;
