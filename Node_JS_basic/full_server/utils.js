@@ -10,7 +10,7 @@ function readDatabase(filePath) {
 
       const lines = data.trim().split('\n');
       const header = lines[0].split(',');
-      const students = lines.slice(1).map(line => {
+      const students = lines.slice(1).map((line) => {
         const values = line.split(',');
         const student = {};
         header.forEach((key, index) => {
@@ -20,7 +20,7 @@ function readDatabase(filePath) {
       });
 
       const fields = {};
-      students.forEach(student => {
+      students.forEach((student) => {
         if (!fields[student.field]) {
           fields[student.field] = [];
         }

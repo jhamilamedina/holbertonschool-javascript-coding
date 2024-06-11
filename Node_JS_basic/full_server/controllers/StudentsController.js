@@ -15,7 +15,7 @@ class StudentsController {
   }
 
   static async getAllStudentsByMajor(req, res) {
-    const major = req.params.major;
+    const { major } = req.params;
     if (!['CS', 'SWE'].includes(major)) {
       res.status(500).send('Major parameter must be CS or SWE');
       return;
