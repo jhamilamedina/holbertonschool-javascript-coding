@@ -4,16 +4,16 @@ const os = require('os');
 class Person {
   constructor(data) {
     const [firstname, lastname, age, field] = data.split(',');
-    this.firstname = ` ${firstname}`;
-    this.lastname = lastname;
-    this.age = age;
-    this.field = field;
+    this.firstname = firstname.trim();
+    this.lastname = lastname.trim();
+    this.age = age.trim();
+    this.field = field.trim();
   }
 }
 
 function getPersons(persons) {
   return persons
-    .slice(1)
+    .slice(1) // Ignorar el encabezado si existe
     .map((p) => (p ? new Person(p) : null))
     .filter((p) => p !== null);
 }
@@ -42,13 +42,8 @@ function stats(persons) {
     CS: cs.names,
     SWE: swe.names,
   };
-  // const a = `Number of students: ${personObj.length}`;
-  // const b = `Number of students in CS: ${cs.total}. List:${cs.names.join(',')}`;
-  // const c = `Number of students in SWE: ${swe.total}. List:${swe.names.join(',')}`;
-  // return `${a}\n${b}\n${c}`;
 }
 
-// export default function readDatabase(filePath) {
 function readDatabase(filePath) {
   return new Promise((resolve, reject) => {
     fs.readFile(filePath, 'utf-8', (err, data) => {
@@ -59,8 +54,9 @@ function readDatabase(filePath) {
         const persons = data.split(lineSeparator).filter((line) => line.trim() !== '');
         if (persons.length === 0) {
           reject(new Error('Cannot load the database'));
+        } else {
+          resolve(stats(persons));
         }
-        resolve(stats(persons));
       }
     });
   });
