@@ -1,29 +1,33 @@
 const fs = require('fs');
-const readline = require('readline');
 
 function readDatabase(filePath) {
   return new Promise((resolve, reject) => {
-    const studentsByField = {};
-
-    const rl = readline.createInterface({
-      input: fs.createReadStream(filePath),
-      crlfDelay: Infinity,
-    });
-
-    rl.on('line', (line) => {
-      const [firstname, field] = line.split(',');
-      if (!studentsByField[field]) {
-        studentsByField[field] = [];
+    fs.readFile(filePath, 'utf8', (err, data) => {
+      if (err) {
+        reject(err);
+        return;
       }
-      studentsByField[field].push(firstname);
-    });
 
-    rl.on('close', () => {
-      resolve(studentsByField);
-    });
+      const lines = data.trim().split('\n');
+      const header = lines[0].split(',');
+      const students = lines.slice(1).map((line) => {
+        const values = line.split(',');
+        const student = {};
+        header.forEach((key, index) => {
+          student[key] = values[index];
+        });
+        return student;
+      });
 
-    rl.on('error', (error) => {
-      reject(error);
+      const fields = {};
+      students.forEach((student) => {
+        if (!fields[student.field]) {
+          fields[student.field] = [];
+        }
+        fields[student.field].push(student.firstname);
+      });
+
+      resolve(fields);
     });
   });
 }
