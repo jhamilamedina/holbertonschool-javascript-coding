@@ -1,65 +1,35 @@
 const fs = require('fs');
-const os = require('os');
-
-class Person {
-  constructor(data) {
-    const [firstname, lastname, age, field] = data.split(',');
-    this.firstname = firstname.trim();
-    this.lastname = lastname.trim();
-    this.age = age.trim();
-    this.field = field.trim();
-  }
-}
-
-function getPersons(persons) {
-  return persons
-    .slice(1) // Ignorar el encabezado si existe
-    .map((p) => (p ? new Person(p) : null))
-    .filter((p) => p !== null);
-}
-
-function getInfo(personObj, field, condition) {
-  let total = 0;
-  const names = [];
-  personObj.forEach((p) => {
-    if (p[field] === condition) {
-      total += 1;
-      names.push(p.firstname);
-    }
-  });
-  return {
-    total,
-    names,
-  };
-}
-
-function stats(persons) {
-  const personObj = getPersons(persons);
-  const cs = getInfo(personObj, 'field', 'CS');
-  const swe = getInfo(personObj, 'field', 'SWE');
-
-  return {
-    CS: cs.names,
-    SWE: swe.names,
-  };
-}
 
 function readDatabase(filePath) {
   return new Promise((resolve, reject) => {
-    fs.readFile(filePath, 'utf-8', (err, data) => {
+    fs.readFile(filePath, 'utf8', (err, data) => {
       if (err) {
-        reject(new Error('Cannot load the database'));
-      } else {
-        const lineSeparator = os.EOL;
-        const persons = data.split(lineSeparator).filter((line) => line.trim() !== '');
-        if (persons.length === 0) {
-          reject(new Error('Cannot load the database'));
-        } else {
-          resolve(stats(persons));
-        }
+        reject(err);
+        return;
       }
+
+      const lines = data.trim().split('\n');
+      const header = lines[0].split(',');
+      const students = lines.slice(1).map((line) => {
+        const values = line.split(',');
+        const student = {};
+        header.forEach((key, index) => {
+          student[key] = values[index];
+        });
+        return student;
+      });
+
+      const fields = {};
+      students.forEach((student) => {
+        if (!fields[student.field]) {
+          fields[student.field] = [];
+        }
+        fields[student.field].push(student.firstname);
+      });
+
+      resolve(fields);
     });
   });
 }
 
-export default readDatabase;
+module.exports = { readDatabase };
