@@ -6,7 +6,7 @@
   "scripts": {
     "lint": "./node_modules/.bin/eslint --fix",
     "check-lint": "lint [0-9]*.js",
-    "test": "./node_modules/mocha/bin/mocha --require babel-register --exit",
+    "test": "./node_modules/mocha/bin/mocha --require babel-register --exit full_server_index.test.js",
     "dev": "nodemon --exec babel-node --presets @babel/preset-env ./full_server/server.js ./database.csv"
   },
   "author": "",
