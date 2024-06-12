@@ -1,38 +1,40 @@
 import readDatabase from '../utils';
 
-export default class StudentsController {
-  static getAllStudents(req, res) {
-    const database = 'database.csv';
-    readDatabase(database)
-      .then((data) => {
-        let textResponse = 'This is the list of our students\n';
-        for (const field in data) {
-          if (Object.prototype.hasOwnProperty.call(data, field)) {
-            textResponse += `Number of students in ${field}: ${data[field].length}. List:${data[field].join(',')}\n`;
-          }
-        }
-        res.status(200).send(`${textResponse.slice(0, -1)}`);
-      })
-      .catch((err) => {
-        // const textResponse = 'This is the list of our students\n';
-        // res.status(500).send(`${textResponse}${err.message}`);
-        res.status(500).send(`${err.message}`);
+class StudentsController {
+  static async getAllStudents(req, res) {
+    try {
+      const students = await readDatabase('./database.csv');
+      let responseText = 'This is the list of our students\n';
+      const fields = Object.keys(students).sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()));
+
+      fields.forEach((field) => {
+        responseText += `Number of students in ${field}: ${students[field].length}. List: ${students[field].join(', ')}\n`;
       });
+
+      res.status(200).send(responseText.trim());
+    } catch (error) {
+      res.status(500).send(error.message);
+    }
   }
 
-  static getAllStudentsByMajor(req, res) {
-    const { major } = req.params;
+  static async getAllStudentsByMajor(req, res) {
+    const { major } = req.params.major;
+
     if (major !== 'CS' && major !== 'SWE') {
       res.status(500).send('Major parameter must be CS or SWE');
-    } else {
-      const database = 'database.csv';
-      readDatabase(database)
-        .then((data) => {
-          res.status(200).send(`List:${data[major]}`);
-        })
-        .catch((err) => {
-          res.status(500).send(err.message);
-        });
+      return;
+    }
+
+    try {
+      const students = await readDatabase('./database.csv');
+      const studentNames = students[major] || [];
+      const responseText = `List: ${studentNames.join(', ')}`;
+
+      res.status(200).send(responseText);
+    } catch (error) {
+      res.status(500).send(error.message);
     }
   }
 }
+
+export default StudentsController;
